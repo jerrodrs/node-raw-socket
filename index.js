@@ -14,7 +14,8 @@ function _expandConstantObject (object) {
 
 var AddressFamily = {
 	1: "IPv4",
-	2: "IPv6"
+	2: "IPv6",
+	17: "AF_PACKET"
 };
 
 _expandConstantObject (AddressFamily);
