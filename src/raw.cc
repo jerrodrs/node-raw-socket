@@ -208,9 +208,39 @@ NAN_METHOD(Ntohs) {
 void ExportConstants (Local<Object> target) {
 	Local<Object> socket_level = Nan::New<Object>();
 	Local<Object> socket_option = Nan::New<Object>();
+	Local<Object> address_family = Nan::New<Object>();
+	Local<Object> protocol = Nan::New<Object>();
 
 	Nan::Set(target, Nan::New("SocketLevel").ToLocalChecked(), socket_level);
 	Nan::Set(target, Nan::New("SocketOption").ToLocalChecked(), socket_option);
+	Nan::Set(target, Nan::New("AddressFamily").ToLocalChecked(), address_family);
+	Nan::Set(target, Nan::New("Protocol").ToLocalChecked(), protocol);
+
+	Nan::Set(address_family, Nan::New("AF_INET").ToLocalChecked(), Nan::New<Number>(AF_INET));
+#ifdef AF_INET6
+	Nan::Set(address_family, Nan::New("AF_INET6").ToLocalChecked(), Nan::New<Number>(AF_INET6));
+#endif
+#ifdef AF_UNIX
+	Nan::Set(address_family, Nan::New("AF_UNIX").ToLocalChecked(), Nan::New<Number>(AF_UNIX));
+#endif
+
+	// Protocol Options
+	Nan::Set(protocol, Nan::New("IPPROTO_IP").ToLocalChecked(), Nan::New<Number>(IPPROTO_IP));
+	Nan::Set(protocol, Nan::New("IPPROTO_ICMP").ToLocalChecked(), Nan::New<Number>(IPPROTO_ICMP));
+	Nan::Set(protocol, Nan::New("IPPROTO_TCP").ToLocalChecked(), Nan::New<Number>(IPPROTO_TCP));
+	Nan::Set(protocol, Nan::New("IPPROTO_UDP").ToLocalChecked(), Nan::New<Number>(IPPROTO_UDP));
+#ifdef IPPROTO_IPV6
+	Nan::Set(protocol, Nan::New("IPPROTO_IPV6").ToLocalChecked(), Nan::New<Number>(IPPROTO_IPV6));
+#endif
+#ifdef IPPROTO_RAW
+	Nan::Set(protocol, Nan::New("IPPROTO_RAW").ToLocalChecked(), Nan::New<Number>(IPPROTO_RAW));
+#endif
+#ifdef IPPROTO_IGMP
+	Nan::Set(protocol, Nan::New("IPPROTO_IGMP").ToLocalChecked(), Nan::New<Number>(IPPROTO_IGMP));
+#endif
+#ifdef IPPROTO_SCTP
+	Nan::Set(protocol, Nan::New("IPPROTO_SCTP").ToLocalChecked(), Nan::New<Number>(IPPROTO_SCTP));
+#endif
 
 	Nan::Set(socket_level, Nan::New("SOL_SOCKET").ToLocalChecked(), Nan::New<Number>(SOL_SOCKET));
 	Nan::Set(socket_level, Nan::New("IPPROTO_IP").ToLocalChecked(), Nan::New<Number>(IPPROTO_IP + 0));

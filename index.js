@@ -4,32 +4,6 @@ var net = require ("net");
 var raw = require ("./build/Release/raw.node");
 var util = require ("util");
 
-function _expandConstantObject (object) {
-	var keys = [];
-	for (key in object)
-		keys.push (key);
-	for (var i = 0; i < keys.length; i++)
-		object[object[keys[i]]] = parseInt (keys[i]);
-}
-
-var AddressFamily = {
-	1: "IPv4",
-	2: "IPv6",
-	17: "AF_PACKET"
-};
-
-_expandConstantObject (AddressFamily);
-
-var Protocol = {
-	0: "None",
-	1: "ICMP",
-	6: "TCP",
-	17: "UDP",
-	58: "ICMPv6"
-};
-
-_expandConstantObject (Protocol);
-
 for (var key in events.EventEmitter.prototype) {
   raw.SocketWrap.prototype[key] = events.EventEmitter.prototype[key];
 }
@@ -203,13 +177,12 @@ exports.createSocket = function (options) {
 	return new Socket (options || {});
 };
 
-exports.AddressFamily = AddressFamily;
-exports.Protocol = Protocol;
-
 exports.Socket = Socket;
 
 exports.SocketLevel = raw.SocketLevel;
 exports.SocketOption = raw.SocketOption;
+exports.AddressFamily = raw.AddressFamily;
+exports.Protocol = raw.Protocol;
 
 exports.htonl = raw.htonl;
 exports.htons = raw.htons;
