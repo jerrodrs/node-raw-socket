@@ -183,6 +183,7 @@ exports.SocketLevel = raw.SocketLevel;
 exports.SocketOption = raw.SocketOption;
 exports.AddressFamily = raw.AddressFamily;
 exports.Protocol = raw.Protocol;
+exports.Ether = raw.Ether;
 
 exports.htonl = raw.htonl;
 exports.htons = raw.htons;
