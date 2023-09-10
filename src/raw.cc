@@ -447,18 +447,18 @@ NAN_METHOD(SocketWrap::New) {
 		socket->protocol_ = Nan::To<Uint32>(info[0]).ToLocalChecked()->Value();
 	}
 
+	// Directly set the family_ member using the provided value
 	if (info.Length () > 1) {
-		if (! info[1]->IsUint32 ()) {
-			Nan::ThrowTypeError("Address family argument must be an unsigned integer");
-			return;
-		} else {
-			if (Nan::To<Uint32>(info[1]).ToLocalChecked()->Value() == 2)
-				family = AF_INET6;
-		}
+			if (! info[1]->IsUint32 ()) {
+					Nan::ThrowTypeError("Address family argument must be an unsigned integer");
+					return;
+			} else {
+					socket->family_ = Nan::To<Uint32>(info[1]).ToLocalChecked()->Value();
+			}
+	} else {
+			socket->family_ = AF_INET; // Default to AF_INET if no family is provided
 	}
-	
-	socket->family_ = family;
-	
+
 	socket->poll_initialised_ = false;
 	
 	socket->no_ip_header_ = false;
