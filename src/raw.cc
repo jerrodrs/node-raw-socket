@@ -689,7 +689,7 @@ NAN_METHOD(SocketWrap::Send) {
 		
 		rc = sendto (socket->poll_fd_, data, length, 0,
 				(struct sockaddr *) &addr, sizeof (addr));
-	} else {
+	} else if (socket->family_ == AF_INET6) {
 #if UV_VERSION_MAJOR > 0
 		struct sockaddr_in addr;
 		uv_ip4_addr(*Nan::Utf8String(info[3]), 0, &addr);
@@ -700,6 +700,18 @@ NAN_METHOD(SocketWrap::Send) {
 
 		rc = sendto (socket->poll_fd_, data, length, 0,
 				(struct sockaddr *) &addr, sizeof (addr));
+	} else if (socket->family_ == AF_PACKET) {
+		struct sockaddr_ll sa;
+		memset(&sa, 0, sizeof(struct sockaddr_ll));
+		sa.sll_family = AF_PACKET;
+		sa.sll_protocol = htons(ETH_P_IP); // Assuming you're sending IP packets
+		sa.sll_ifindex = if_nametoindex(*Nan::Utf8String(info[3])); // Interface name
+
+		rc = sendto(socket->poll_fd_, data, length, 0,
+								(struct sockaddr*)&sa, sizeof(sa));
+	} else {
+		Nan::ThrowError("Unsupported address family");
+		return;
 	}
 	
 	if (rc == SOCKET_ERROR) {
