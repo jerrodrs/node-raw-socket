@@ -36,13 +36,6 @@
 #include <fcntl.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
-#ifdef __linux__
-#include <linux/if_ether.h>
-#include <net/if.h>
-#include <linux/if_packet.h>
-#endif
-
 #define SOCKET int
 #define SOCKET_ERROR -1
 #define SOCKET_ERRNO errno

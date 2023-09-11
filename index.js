@@ -125,6 +125,11 @@ Socket.prototype.send = function (buffer, offset, length, address,
 		return this;
 	}
 
+	if (! net.isIP (address)) {
+		afterCallback.call (this, new Error ("Invalid IP address '" + address + "'"));
+		return this;
+	}
+
 	var req = {
 		buffer: buffer,
 		offset: offset,
@@ -178,7 +183,6 @@ exports.SocketLevel = raw.SocketLevel;
 exports.SocketOption = raw.SocketOption;
 exports.AddressFamily = raw.AddressFamily;
 exports.Protocol = raw.Protocol;
-exports.Ether = raw.Ether;
 
 exports.htonl = raw.htonl;
 exports.htons = raw.htons;

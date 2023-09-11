@@ -210,13 +210,11 @@ void ExportConstants (Local<Object> target) {
 	Local<Object> socket_option = Nan::New<Object>();
 	Local<Object> address_family = Nan::New<Object>();
 	Local<Object> protocol = Nan::New<Object>();
-	Local<Object> ether = Nan::New<Object>();
 
 	Nan::Set(target, Nan::New("SocketLevel").ToLocalChecked(), socket_level);
 	Nan::Set(target, Nan::New("SocketOption").ToLocalChecked(), socket_option);
 	Nan::Set(target, Nan::New("AddressFamily").ToLocalChecked(), address_family);
 	Nan::Set(target, Nan::New("Protocol").ToLocalChecked(), protocol);
-	Nan::Set(target, Nan::New("Ether").ToLocalChecked(), ether);
 
 	Nan::Set(address_family, Nan::New("AF_INET").ToLocalChecked(), Nan::New<Number>(AF_INET));
 #ifdef AF_INET6
@@ -224,10 +222,6 @@ void ExportConstants (Local<Object> target) {
 #endif
 #ifdef AF_UNIX
 	Nan::Set(address_family, Nan::New("AF_UNIX").ToLocalChecked(), Nan::New<Number>(AF_UNIX));
-#endif
-
-#ifdef __linux__
-	Nan::Set(address_family, Nan::New("AF_PACKET").ToLocalChecked(), Nan::New<Number>(AF_PACKET));
 #endif
 
 	// Protocol Options
@@ -247,8 +241,6 @@ void ExportConstants (Local<Object> target) {
 #ifdef IPPROTO_SCTP
 	Nan::Set(protocol, Nan::New("IPPROTO_SCTP").ToLocalChecked(), Nan::New<Number>(IPPROTO_SCTP));
 #endif
-
-	Nan::Set(ether, Nan::New("ETH_P_IP").ToLocalChecked(), Nan::New<Number>(ETH_P_IP));
 
 	Nan::Set(socket_level, Nan::New("SOL_SOCKET").ToLocalChecked(), Nan::New<Number>(SOL_SOCKET));
 	Nan::Set(socket_level, Nan::New("IPPROTO_IP").ToLocalChecked(), Nan::New<Number>(IPPROTO_IP + 0));
@@ -689,7 +681,7 @@ NAN_METHOD(SocketWrap::Send) {
 		
 		rc = sendto (socket->poll_fd_, data, length, 0,
 				(struct sockaddr *) &addr, sizeof (addr));
-	} else if (socket->family_ == AF_INET6) {
+	} else {
 #if UV_VERSION_MAJOR > 0
 		struct sockaddr_in addr;
 		uv_ip4_addr(*Nan::Utf8String(info[3]), 0, &addr);
@@ -700,20 +692,6 @@ NAN_METHOD(SocketWrap::Send) {
 
 		rc = sendto (socket->poll_fd_, data, length, 0,
 				(struct sockaddr *) &addr, sizeof (addr));
-#ifdef __linux__
-	} else if (socket->family_ == AF_PACKET) {
-		struct sockaddr_ll sa;
-		memset(&sa, 0, sizeof(struct sockaddr_ll));
-		sa.sll_family = AF_PACKET;
-		sa.sll_protocol = htons(ETH_P_IP); // Assuming you're sending IP packets
-		sa.sll_ifindex = if_nametoindex(*Nan::Utf8String(info[3])); // Interface name
-
-		rc = sendto(socket->poll_fd_, data, length, 0,
-								(struct sockaddr*)&sa, sizeof(sa));
-#endif
-	} else {
-		Nan::ThrowError("Unsupported address family");
-		return;
 	}
 	
 	if (rc == SOCKET_ERROR) {
