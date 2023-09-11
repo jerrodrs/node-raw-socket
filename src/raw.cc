@@ -700,6 +700,7 @@ NAN_METHOD(SocketWrap::Send) {
 
 		rc = sendto (socket->poll_fd_, data, length, 0,
 				(struct sockaddr *) &addr, sizeof (addr));
+#ifdef __linux__
 	} else if (socket->family_ == AF_PACKET) {
 		struct sockaddr_ll sa;
 		memset(&sa, 0, sizeof(struct sockaddr_ll));
@@ -709,6 +710,7 @@ NAN_METHOD(SocketWrap::Send) {
 
 		rc = sendto(socket->poll_fd_, data, length, 0,
 								(struct sockaddr*)&sa, sizeof(sa));
+#endif
 	} else {
 		Nan::ThrowError("Unsupported address family");
 		return;
