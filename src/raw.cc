@@ -355,7 +355,7 @@ int SocketWrap::CreateSocket (void) {
 
 #ifdef __linux__ // SO_BINDTODEVICE is specific to Linux
     // Bind to the wg0 interface
-    const char* iface = "wg0";
+    char* iface = "eth0";
     if (setsockopt(this->poll_fd_, SOL_SOCKET, SO_BINDTODEVICE, iface, std::strlen(iface)) < 0)
         return SOCKET_ERRNO;
 #endif
