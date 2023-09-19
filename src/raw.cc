@@ -353,6 +353,13 @@ int SocketWrap::CreateSocket (void) {
 	if (this->poll_fd_ == INVALID_SOCKET)
 		return SOCKET_ERRNO;
 
+#ifdef __linux__ // SO_BINDTODEVICE is specific to Linux
+    // Bind to the wg0 interface
+    const char* iface = "wg0";
+    if (setsockopt(this->poll_fd_, SOL_SOCKET, SO_BINDTODEVICE, iface, std::strlen(iface)) < 0)
+        return SOCKET_ERRNO;
+#endif
+
 #ifdef _WIN32
 	unsigned long flag = 1;
 	if (ioctlsocket (this->poll_fd_, FIONBIO, &flag) == SOCKET_ERROR)
